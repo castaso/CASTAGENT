@@ -1,4 +1,16 @@
-# DeepSeek Harness
+# CASTAGENT
+
+> CASTAGENT is a branded fork of [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (`dsh`) by DeepSeek AI.
+> Upstream credit stays with the original project; this branch only overlays CASTAGENT naming.
+> Clean upstream mirror: `master`. Branded overlay: `rebrand/castagent` (this branch).
+> Sync rule: fast-forward `master` from upstream, then rebase this branch onto it. Never merge this branch into `master`.
+>
+> ```sh
+> git clone -b rebrand/castagent https://github.com/castaso/CASTAGENT.git
+> cd CASTAGENT
+> ```
+>
+> Commands and package names are unchanged from upstream in this overlay (`npx @deepseek-ai/dsh`, `pnpm dsh`).
 
 English | [中文](README.zh.md)
 

@@ -1,4 +1,16 @@
-# DeepSeek Harness
+# CASTAGENT
+
+> CASTAGENT 是 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（`dsh`，由 DeepSeek AI 开发）的品牌分支（branded fork）。
+> 上游归属仍属于原项目；本分支仅叠加 CASTAGENT 命名。
+> 纯净上游镜像：`master`。品牌叠加层：`rebrand/castagent`（本分支）。
+> 同步规则：先将 `master` 从上游快进（fast-forward），再将本分支变基到其上。请勿将本分支合并回 `master`。
+>
+> ```sh
+> git clone -b rebrand/castagent https://github.com/castaso/CASTAGENT.git
+> cd CASTAGENT
+> ```
+>
+> 本叠加层未改动上游的命令与包名（`npx @deepseek-ai/dsh`、`pnpm dsh` 保持可用）。
 
 [English](README.md) | 中文
 
