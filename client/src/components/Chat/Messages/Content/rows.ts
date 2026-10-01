@@ -29,5 +29,13 @@ export const ROW_GLYPH_SLOT = 'flex h-5 min-w-6 shrink-0 items-center justify-ce
  * height animation is untouched; it starts at the wrapper's top and stops
  * short of the last row's bottom margin.
  */
+/**
+ * A copy action laid over its pane (`group/copy`) instead of beside it, so it
+ * takes no width from the content. Hidden until the pane is hovered or the
+ * action holds keyboard focus; touch input, which cannot hover, always sees it.
+ */
+export const PANE_COPY_REVEAL =
+  '[@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover/copy:opacity-100';
+
 export const FOLD_RAIL_CLASSES =
   "relative pl-6 before:absolute before:bottom-1.5 before:left-[11px] before:top-0.5 before:w-px before:bg-border-medium before:content-['']";
