@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+# rebrand-replay.sh — keep rebrand/CASTAGENT current and conflict-free on top of upstream main.
+#
+# Usage: scripts/rebrand-replay.sh [--push]
+#
+#   (no args)  fetch upstream, fast-forward main, rebase the overlay, verify branding
+#   --push     same, and push main plus the rebased overlay
+#
+# Exits non-zero if the fast-forward is impossible, the rebase conflicts, or any branding
+# marker is missing. A conflicted rebase is aborted, leaving the branch as it was.
+
+set -euo pipefail
+
+REBRANCH="rebrand/CASTAGENT"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# Branding marker => file that must contain it.
+MARKERS=(
+  "APP_TITLE=CASTAGENT|.env.example"
+  "<title>CASTAGENT</title>|client/index.html"
+  "name: 'CASTAGENT'|client/vite.config.ts"
+  "DEFAULT_APP_TITLE = 'CASTAGENT'|client/src/utils/documentTitle.ts"
+  "CASTAGENT Rebranding Notice|LICENSE"
+)
+
+for remote in upstream origin; do
+  if ! git remote get-url "$remote" >/dev/null 2>&1; then
+    echo "ERROR: remote '$remote' is not configured."
+    echo "  git remote add upstream https://github.com/LibreChat-AI/LibreChat.git"
+    exit 1
+  fi
+done
+
+if ! git show-ref --verify --quiet "refs/heads/$REBRANCH"; then
+  echo "ERROR: branch '$REBRANCH' does not exist."
+  exit 1
+fi
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo "ERROR: working tree is not clean. Commit or stash first."
+  git status --short
+  exit 1
+fi
+
+echo "==> Fetching upstream"
+git fetch upstream --prune
+
+echo "==> Fast-forwarding main to upstream/main"
+git checkout main
+if ! git merge --ff-only upstream/main; then
+  echo "ERROR: main diverged from upstream/main and cannot be fast-forwarded."
+  echo "       main must stay a pristine mirror; reset it with:"
+  echo "         git checkout main && git reset --hard upstream/main"
+  exit 1
+fi
+git log -1 --oneline main
+
+echo "==> Rebasing $REBRANCH onto main"
+git checkout "$REBRANCH"
+if ! git rebase main; then
+  git rebase --abort
+  echo
+  echo "ERROR: rebase conflicted; $REBRANCH restored to its pre-rebase state."
+  echo "       Resolve manually with: git rebase main"
+  echo "       Only the overlay files listed in SYNC.md should ever conflict —"
+  echo "       keep upstream's logic and change only the CASTAGENT fallback strings."
+  exit 1
+fi
+
+echo "==> Verifying branding markers"
+fail=0
+for entry in "${MARKERS[@]}"; do
+  marker="${entry%%|*}"
+  file="${entry##*|}"
+  if [ ! -f "$file" ]; then
+    echo "  MISSING $file (upstream removed it)"
+    fail=1
+    continue
+  fi
+  if grep -qF "$marker" "$file"; then
+    echo "  OK      $file :: $marker"
+  else
+    echo "  REVERTED $file no longer contains: $marker"
+    fail=1
+  fi
+done
+
+# A new upstream default would silently reintroduce the old product name.
+stray=$(grep -rn "|| 'LibreChat'" \
+  --include='*.js' --include='*.ts' \
+  api config packages/api/src/shared-links 2>/dev/null || true)
+if [ -n "$stray" ]; then
+  echo
+  echo "  NOTE: upstream reintroduced a 'LibreChat' APP_TITLE fallback:"
+  echo "$stray" | sed 's/^/    /'
+  echo "       Update these to 'CASTAGENT' to keep branding consistent."
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo
+  echo "ERROR: branding verification failed. Reapply the reverted overlay edits before pushing."
+  exit 1
+fi
+
+if [ "${1:-}" = "--push" ]; then
+  echo "==> Pushing"
+  git push origin main
+  git push --force-with-lease origin "$REBRANCH"
+fi
+
+echo
+echo "Done. (fail=$fail)  current branch: $(git rev-parse --abbrev-ref HEAD)"
+exit "$fail"
