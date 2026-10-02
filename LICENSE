@@ -19,3 +19,33 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+================================================================================
+CASTAGENT REBRANDING NOTICE
+================================================================================
+
+The MIT License text above, and the code it covers, are those of LibreChat:
+
+    LibreChat — https://github.com/LibreChat-AI/LibreChat
+    Copyright (c) 2026 LibreChat contributors
+
+CASTAGENT (https://github.com/castaso/CASTAGENT) is an unmodified-license fork
+of LibreChat. This notice describes only the delta:
+
+  * Upstream code: Copyright (c) 2026 LibreChat contributors, MIT License,
+    unchanged and in full force. The MIT terms require the copyright notice and
+    permission notice to be retained in all copies — they are retained above,
+    verbatim, and are not superseded by this notice.
+  * CASTAGENT rebranding changes: Copyright (c) 2026 castaso. These are the
+    CASTAGENT product name and branding defaults listed in SYNC.md. They are
+    distributed under the same MIT License.
+  * "LibreChat" remains the name of the upstream project and the copyright of its
+    contributors. CASTAGENT is not endorsed by, affiliated with, or a substitute
+    for LibreChat. The LibreChat name and logo remain the property of their
+    respective owners and are used here only for attribution.
+  * No functionality was removed or restricted. MIT places no conditions on
+    redistribution beyond notice retention, and none are imposed here.
+
+Upstream:   https://github.com/LibreChat-AI/LibreChat
+This fork:  https://github.com/castaso/CASTAGENT
