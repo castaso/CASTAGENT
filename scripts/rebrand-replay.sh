@@ -43,7 +43,12 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-echo "==> Fetching upstream"
+echo "==> Fetching upstream/main"
+# Narrow the upstream refspec once so this stays fast; upstream has hundreds of
+# branches and syncing only needs main.
+if ! git config --get-all remote.upstream.fetch | grep -q 'refs/heads/main:'; then
+  git config remote.upstream.fetch '+refs/heads/main:refs/remotes/upstream/main'
+fi
 git fetch upstream --prune
 
 echo "==> Fast-forwarding main to upstream/main"
@@ -57,9 +62,13 @@ fi
 git log -1 --oneline main
 
 echo "==> Rebasing $REBRANCH onto main"
-git checkout "$REBRANCH"
+if ! git checkout "$REBRANCH"; then
+  echo "ERROR: could not check out $REBRANCH (a Windows file lock is the usual cause)."
+  echo "       Close any editor or process holding files in the tree, then retry."
+  exit 1
+fi
 if ! git rebase main; then
-  git rebase --abort
+  git rebase --abort || true
   echo
   echo "ERROR: rebase conflicted; $REBRANCH restored to its pre-rebase state."
   echo "       Resolve manually with: git rebase main"
