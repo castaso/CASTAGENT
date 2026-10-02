@@ -108,7 +108,9 @@ The sync script checks three markers and fails if any is missing:
 |---|---|
 | `APP_TITLE=CASTAGENT` | `.env.example` |
 | `<title>CASTAGENT</title>` | `client/index.html` |
-| `CASTAGENT Rebranding Notice` | `LICENSE` |
+| `name: 'CASTAGENT'` | `client/vite.config.ts` |
+| `DEFAULT_APP_TITLE = 'CASTAGENT'` | `client/src/utils/documentTitle.ts` |
+| `CASTAGENT REBRANDING NOTICE` | `LICENSE` |
 
 A missing marker means an upstream commit reverted one of the overlay edits. Restore it before
 pushing — otherwise the branch reports success while the product name is wrong.
@@ -118,7 +120,9 @@ Manual check:
 ```bash
 grep -F 'APP_TITLE=CASTAGENT' .env.example
 grep -F '<title>CASTAGENT</title>' client/index.html
-grep -F 'CASTAGENT Rebranding Notice' LICENSE
+grep -F "name: 'CASTAGENT'" client/vite.config.ts
+grep -F "DEFAULT_APP_TITLE = 'CASTAGENT'" client/src/utils/documentTitle.ts
+grep -F 'CASTAGENT REBRANDING NOTICE' LICENSE
 ```
 
 ## Setting the name per deployment

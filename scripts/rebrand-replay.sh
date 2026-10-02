@@ -36,7 +36,7 @@ MARKERS=(
   "<title>CASTAGENT</title>|client/index.html"
   "name: 'CASTAGENT'|client/vite.config.ts"
   "DEFAULT_APP_TITLE = 'CASTAGENT'|client/src/utils/documentTitle.ts"
-  "CASTAGENT Rebranding Notice|LICENSE"
+  "CASTAGENT REBRANDING NOTICE|LICENSE"
 )
 
 for remote in upstream origin; do
