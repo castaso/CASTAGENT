@@ -12,7 +12,22 @@
 set -euo pipefail
 
 REBRANCH="rebrand/CASTAGENT"
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# This script lives only on the rebrand branch, so checking that branch out would
+# have git rewrite the file while the shell still holds it open — which Windows
+# rejects. Re-exec from a copy outside the worktree to release the handle.
+if [ -z "${REBRAND_REPLAY_REEXEC:-}" ]; then
+  REPLAY_COPY="$(mktemp -t rebrand-replay-XXXXXX.sh)"
+  cp "${BASH_SOURCE[0]}" "$REPLAY_COPY"
+  chmod +x "$REPLAY_COPY" 2>/dev/null || true
+  trap 'rm -f "$REPLAY_COPY"' EXIT
+  REBRAND_REPLAY_REEXEC=1 exec bash "$REPLAY_COPY" "$@"
+fi
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd || true)"
+if [ -z "$REPO_ROOT" ] || [ ! -d "$REPO_ROOT/.git" ]; then
+  REPO_ROOT="$(git rev-parse --show-toplevel)"
+fi
 cd "$REPO_ROOT"
 
 # Branding marker => file that must contain it.
